@@ -9,13 +9,13 @@ require 'header.php';
 </head>
 <body class="container py-4">
     <h2>Tambah Aset</h2>
-    <form method="POST" action="">
+    <form method="POST" action="" enctype="multipart/form-data">
         <div class="row">
             <div class="col-md-6">
                 <div class="mb-3">
                     <label class="form-label">Kode Aset</label>
                     <input type="text" name="kode_aset" class="form-control" readonly 
-                           value="<?= 'AS-' . sprintf('%04d', mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM aset")) + 1) ?>" required>
+                           value="<?= 'AS-' . sprintf('%04d', mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM aset")) + 2) ?>" required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Nama Aset</label>
@@ -39,6 +39,13 @@ require 'header.php';
                     <label class="form-label">Nilai Perolehan</label>
                     <input type="number" step="0.01" name="nilai_perolehan" class="form-control" required>
                 </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Jumlah</label>
+                    <input type="number" name="jumlah" class="form-control" required>
+                </div>
+                
+
                 <div class="mb-3">
                     <label class="form-label">Kondisi</label>
                     <select name="kondisi" class="form-control" required>
@@ -51,6 +58,22 @@ require 'header.php';
                     <label class="form-label">Keterangan</label>
                     <textarea name="keterangan" class="form-control"></textarea>
                 </div>
+                <div class="mb-3">
+                    <label class="form-label">Foto</label>
+                    <input type="file" name="foto" class="form-control" accept="image/*" onchange="previewImage(event)">
+                    <img id="preview" src="" style="max-width: 100%; margin-top: 10px;">
+                </div>
+
+                <script>
+                    function previewImage(event) {
+                        var reader = new FileReader();
+                        reader.onload = function(){
+                            var output = document.getElementById('preview');
+                            output.src = reader.result;
+                        };
+                        reader.readAsDataURL(event.target.files[0]);
+                    }
+                </script>
             </div>
         </div>
         <button type="submit" name="simpan" class="btn btn-success">Simpan</button>
@@ -59,7 +82,12 @@ require 'header.php';
 
     <?php
     if (isset($_POST['simpan'])) {
-        $sql = "INSERT INTO aset (kode_aset, nama_aset, kategori, lokasi, tanggal_perolehan, nilai_perolehan, kondisi, keterangan)
+        $foto = '';
+        if (!empty($_FILES['foto']['tmp_name'])) {
+            $foto = base64_encode(file_get_contents($_FILES['foto']['tmp_name']));
+        }
+
+        $sql = "INSERT INTO aset (kode_aset, nama_aset, kategori, lokasi, tanggal_perolehan, nilai_perolehan,jumlah, kondisi, keterangan, foto)
                 VALUES (
                     '{$_POST['kode_aset']}',
                     '{$_POST['nama_aset']}',
@@ -67,8 +95,10 @@ require 'header.php';
                     '{$_POST['lokasi']}',
                     '{$_POST['tanggal_perolehan']}',
                     '{$_POST['nilai_perolehan']}',
+                    '{$_POST['jumlah']}',
                     '{$_POST['kondisi']}',
-                    '{$_POST['keterangan']}'
+                    '{$_POST['keterangan']}',
+                    '{$foto}'
                 )";
         mysqli_query($koneksi, $sql);
         echo "<script>window.location='asset.php';</script>";

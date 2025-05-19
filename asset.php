@@ -16,9 +16,10 @@ require 'header.php';
                 <th>Kode Aset</th>
                 <th>Nama Aset</th>
                 <th>Kategori</th>
-                <th>Lokasi</th>
+                <th>Foto</th>
                 <th>Tanggal Perolehan</th>
                 <th>Nilai</th>
+                <th>Jumlah</th>
                 <th>Kondisi</th>
                 <th>Aksi</th>
             </tr>
@@ -31,15 +32,25 @@ require 'header.php';
                     <td>{$data['kode_aset']}</td>
                     <td>{$data['nama_aset']}</td>
                     <td>{$data['kategori']}</td>
-                    <td>{$data['lokasi']}</td>
+                  <td> "
+ ?>    <?php if(!empty($data['foto'])): ?>
+        <img src="data:image/jpg;base64,<?= $data['foto'] ?>" width="100" id="preview">
+    <?php else: ?>
+        <span class="text-muted">Tidak ada foto</span>
+    <?php endif; ?>
+</td>
+<?php echo "
                     <td>{$data['tanggal_perolehan']}</td>
                     <td>Rp " . number_format($data['nilai_perolehan'], 2, ',', '.') . "</td>
+                    <td>{$data['jumlah']}</td>
                     <td><span class='badge bg-" . 
                         ($data['kondisi'] == 'baik' ? 'success' : ($data['kondisi'] == 'rusak ringan' ? 'warning' : 'danger')) .
                         "'>{$data['kondisi']}</span></td>
                     <td>
                         <a href='asset_edit.php?id={$data['id']}' class='btn btn-sm btn-primary'>Edit</a>
                         <a href='asset_hapus.php?id={$data['id']}' onclick='return confirm(\"Hapus aset ini?\")' class='btn btn-sm btn-danger'>Hapus</a>
+                       
+                        
                     </td>
                 </tr>";
             }

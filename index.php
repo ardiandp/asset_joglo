@@ -129,53 +129,86 @@
             </div>
         </div>
     </div>
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Data Table -->
+<!-- DataTables BS5 CSS -->
+<link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
-    <div class="table-responsive">
-        <table class="table table-striped table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>No Invoice</th>
-                    <th>Tanggal</th>
-                    <th>Nama</th>
-                    <th>Jumlah</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                $query = mysqli_query($koneksi, "SELECT * FROM transaksi ORDER BY id DESC");
-                while ($data = mysqli_fetch_assoc($query)) {
-                    echo "<tr>
-                        <td>{$data['no_invoice']}</td>
-                        <td>" . date('d-m-Y', strtotime($data['tanggal'])) . "</td>
-                        <td>{$data['nama']}</td>
-                        <td>Rp " . number_format($data['jumlah'], 2, ',', '.') . "</td>
-                        <td><span class='badge rounded-pill " . ($data['status'] == 'lunas' ? 'bg-success' : 'bg-warning') . "'>{$data['status']}</span></td>
-                        <td>
-                            <a class='btn btn-sm btn-info' href='cetak.php?id={$data['id']}' target='_blank'>
-                                <i class='fas fa-print me-1'></i>Cetak
-                            </a>
-                            <button class='btn btn-sm btn-danger' onclick='konfirmasiHapus({$data['id']})'>
-                                <i class='fas fa-trash-alt me-1'></i>Hapus
-                            </button>
-                            <a class='btn btn-sm btn-warning' href='edit.php?id={$data['id']}'>
-                                <i class='fas fa-edit me-1'></i>Edit
-                            </a>
-                            
-                        </td>
-                    </tr>";
-                }
-                ?>
-            </tbody>
-        </table>
-    </div>
+<!-- Data Table -->
+<div class="table-responsive mt-3">
+    <table id="table-data" class="table table-bordered table-hover table-striped w-100">
+        <thead class="table-light">
+            <tr>
+                <th style="width: 10%">No Invoice</th>
+                <th style="width: 15%">Tanggal</th>
+                <th style="width: 30%">Nama</th>
+                <th style="width: 20%">Jumlah</th>
+                <th style="width: 10%">Status</th>
+                <th style="width: 15%">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $query = mysqli_query($koneksi, "SELECT * FROM transaksi ORDER BY id DESC");
+            while ($data = mysqli_fetch_assoc($query)) {
+                $statusClass = ($data['status'] == 'lunas') ? 'bg-success' : 'bg-warning text-dark';
+                echo "<tr>
+                    <td class='text-center'>{$data['no_invoice']}</td>
+                    <td class='text-center'>" . date('d-m-Y', strtotime($data['tanggal'])) . "</td>
+                    <td>{$data['nama']}</td>
+                    <td class='text-end'>Rp " . number_format($data['jumlah'], 2, ',', '.') . "</td>
+                    <td class='text-center'>
+                        <span class='badge {$statusClass}'>{$data['status']}</span>
+                    </td>
+                    <td class='text-center'>
+                        <a class='btn btn-sm btn-outline-primary me-1' href='cetak.php?id={$data['id']}' target='_blank'>
+                            <i class='fas fa-print'></i>
+                        </a>
+                        <a class='btn btn-sm btn-outline-warning me-1' href='edit.php?id={$data['id']}'>
+                            <i class='fas fa-edit'></i>
+                        </a>
+                        <button class='btn btn-sm btn-outline-danger' onclick='konfirmasiHapus({$data['id']})'>
+                            <i class='fas fa-trash-alt'></i>
+                        </button>
+                    </td>
+                </tr>";
+            }
+            ?>
+        </tbody>
+    </table>
+</div>
+
+<!-- Required Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- DataTables + Bootstrap 5 JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#table-data').DataTable({
+            scrollX: true,
+            ordering: false,
+            autoWidth: false,
+            columnDefs: [
+                { width: "10%", targets: 0 },
+                { width: "15%", targets: 1 },
+                { width: "30%", targets: 2 },
+                { width: "20%", targets: 3 },
+                { width: "10%", targets: 4 },
+                { width: "15%", targets: 5 }
+            ]
+        });
+    });
+</script>
+
 
     <!-- JavaScript Libraries -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     
     <script>
         // Initialize modal
