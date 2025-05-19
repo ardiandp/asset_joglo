@@ -5,60 +5,87 @@ require 'header.php';
 <html>
 <head>
     <title>Data Aset</title>
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables Bootstrap 5 -->
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body class="container py-4">
     <h2 class="mb-4">Daftar Aset</h2>
     <a href="asset_tambah.php" class="btn btn-success mb-3">+ Tambah Aset</a>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Kode Aset</th>
-                <th>Nama Aset</th>
-                <th>Kategori</th>
-                <th>Foto</th>
-                <th>Tanggal Perolehan</th>
-                <th>Nilai</th>
-                <th>Jumlah</th>
-                <th>Kondisi</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            $query = mysqli_query($koneksi, "SELECT * FROM aset ORDER BY id DESC");
-            while ($data = mysqli_fetch_assoc($query)) {
-                echo "<tr>
-                    <td>{$data['kode_aset']}</td>
-                    <td>{$data['nama_aset']}</td>
-                    <td>{$data['kategori']}</td>
-                  <td> "
- ?>    <?php if(!empty($data['foto'])): ?>
-        <img src="data:image/jpg;base64,<?= $data['foto'] ?>" width="100" id="preview">
-    <?php else: ?>
-        <span class="text-muted">Tidak ada foto</span>
-    <?php endif; ?>
-</td>
-<?php echo "
-                    <td>{$data['tanggal_perolehan']}</td>
-                    <td>Rp " . number_format($data['nilai_perolehan'], 2, ',', '.') . "</td>
-                    <td>{$data['jumlah']}</td>
-                    <td><span class='badge bg-" . 
-                        ($data['kondisi'] == 'baik' ? 'success' : ($data['kondisi'] == 'rusak ringan' ? 'warning' : 'danger')) .
-                        "'>{$data['kondisi']}</span></td>
-                    <td>
-                        <a href='asset_edit.php?id={$data['id']}' class='btn btn-sm btn-primary'>Edit</a>
-                        <a href='asset_hapus.php?id={$data['id']}' onclick='return confirm(\"Hapus aset ini?\")' class='btn btn-sm btn-danger'>Hapus</a>
+
+    <div class="table-responsive">
+        <table id="table-aset" class="table table-bordered table-striped table-hover" style="width:100%">
+            <thead class="table-dark">
+                <tr>
+                    <th>Kode Aset</th>
+                    <th>Nama Aset</th>
+                    <th>Kategori</th>
+                    <th>Foto</th>
+                    
+                    <th>Nilai</th>
+                    <th>Jumlah</th>
+                    <th>Total</th>
+                    <th>Kondisi</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $query = mysqli_query($koneksi, "SELECT * FROM aset ORDER BY id DESC");
+                while ($data = mysqli_fetch_assoc($query)) {
+                    echo "<tr>
+                        <td>{$data['kode_aset']}</td>
+                        <td>{$data['nama_aset']}</td>
+                        <td>{$data['kategori']}</td>
+                        <td>";
+                            if (!empty($data['foto'])) {
+                                echo "<img src='data:image/jpg;base64,{$data['foto']}' width='80'>";
+                            } else {
+                                echo "<span class='text-muted'>Tidak ada foto</span>";
+                            }
+                    echo "</td>
                        
-                        
-                    </td>
-                </tr>";
-            }
-            ?>
-        </tbody>
-    </table>
+                        <td class='text-end'>Rp " . number_format($data['nilai_perolehan'], 2, ',', '.') . "</td>
+                        <td class='text-center'>{$data['jumlah']}</td>
+                                                 <td class='text-end'>Rp " . number_format($data['jumlah'] * $data['nilai_perolehan'], 2, ',', '.') . "</td>
+                        <td class='text-center'>
+                            <span class='badge bg-" . 
+                                ($data['kondisi'] == 'baik' ? 'success' : ($data['kondisi'] == 'rusak ringan' ? 'warning' : 'danger')) . "'>
+                                {$data['kondisi']}
+                            </span>
+                        </td>
+                        <td class='text-center'>
+                            <a href='asset_edit.php?id={$data['id']}' class='btn btn-sm btn-warning'>
+                                <i class='fas fa-edit me-1'></i>Edit
+                            </a>
+                            <a href='asset_hapus.php?id={$data['id']}' onclick='return confirm(\"Hapus aset ini?\")' class='btn btn-sm btn-danger'>
+                                <i class='fas fa-trash-alt me-1'></i>Hapus
+                            </a>
+                        </td>
+                    </tr>";
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#table-aset').DataTable({
+                "ordering": true,
+                "autoWidth": false,
+                "scrollX": true
+            });
+        });
+    </script>
 </body>
 </html>
-
 
 <?php require 'footer.php'; ?>

@@ -75,26 +75,27 @@ $data = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM aset WHERE id =
     </form>
 
     <?php
-    if (isset($_POST['update'])) {
-        $foto = '';
-        if (!empty($_FILES['foto']['tmp_name'])) {
-            $foto = base64_encode(file_get_contents($_FILES['foto']['tmp_name']));
-        }
-
-        $sql = "UPDATE aset SET 
-            nama_aset = '{$_POST['nama_aset']}',
-            kategori = '{$_POST['kategori']}',
-            lokasi = '{$_POST['lokasi']}',
-            tanggal_perolehan = '{$_POST['tanggal_perolehan']}',
-            nilai_perolehan = '{$_POST['nilai_perolehan']}',
-            kondisi = '{$_POST['kondisi']}',
-            keterangan = '{$_POST['keterangan']}',
-            foto = '{$foto}'
-            WHERE id = $id";
-        mysqli_query($koneksi, $sql);
-        echo "<script>window.location='asset.php';</script>";
+if (isset($_POST['update'])) {
+    $foto = $data['foto']; // Default to existing photo
+    if (!empty($_FILES['foto']['tmp_name'])) {
+        $foto = base64_encode(file_get_contents($_FILES['foto']['tmp_name']));
     }
-    ?>
+
+    $sql = "UPDATE aset SET 
+        nama_aset = '{$_POST['nama_aset']}',
+        kategori = '{$_POST['kategori']}',
+        lokasi = '{$_POST['lokasi']}',
+        tanggal_perolehan = '{$_POST['tanggal_perolehan']}',
+        nilai_perolehan = '{$_POST['nilai_perolehan']}',
+        kondisi = '{$_POST['kondisi']}',
+        keterangan = '{$_POST['keterangan']}'" .
+        (!empty($_FILES['foto']['tmp_name']) ? ", foto = '{$foto}'" : "") .
+        " WHERE id = $id";
+        
+    mysqli_query($koneksi, $sql);
+    echo "<script>window.location='asset.php';</script>";
+}
+?>
 </body>
 </html>
 
