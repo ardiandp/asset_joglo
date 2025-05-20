@@ -87,6 +87,7 @@ if (isset($_POST['update'])) {
         lokasi = '{$_POST['lokasi']}',
         tanggal_perolehan = '{$_POST['tanggal_perolehan']}',
         nilai_perolehan = '{$_POST['nilai_perolehan']}',
+        jumlah = '{$_POST['jumlah']}',
         kondisi = '{$_POST['kondisi']}',
         keterangan = '{$_POST['keterangan']}'" .
         (!empty($_FILES['foto']['tmp_name']) ? ", foto = '{$foto}'" : "") .
